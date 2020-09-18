@@ -1,0 +1,11 @@
+{
+    "elements": [
+        { "type": "ValidationTextBox", "name": "VRE_Hostname", "caption": "Hostname" }
+    ],
+    "actions": [
+        { "type": "TestCenter", "name": "Test center" }
+    ],
+    "status": [
+
+    ]
+}
