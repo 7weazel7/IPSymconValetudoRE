@@ -78,6 +78,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
 
             // Auslesen der MQTT Config
             $FullTopic = $this->ReturnMqttFullTopic();
+            $this->SendDebug(__FUNCTION__ . ': FullTopic', $FullTopic, 0);
             $this->SetReceiveDataFilter('.*' . $FullTopic . '.*');
 
         }
