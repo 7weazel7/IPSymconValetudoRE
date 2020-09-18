@@ -5,5 +5,5 @@ IPSymconValetudoRE
 ![Code](https://img.shields.io/badge/Code-PHP-blue.svg)
 [![StyleCI](https://github.styleci.io/repos/57190839/shield?branch=master)](https://github.styleci.io/repos/57190839)
 
-Dient zu Steuerung von Staubsauger Robotern in IP-Symcon mir der alternativen Firmware Valetudo RE.
+Dient zu Steuerung von Staubsauger Robotern in IP-Symcon mir der alternativen Firmware Valetudo RE via MQTT.
 Diese funktioniert auch ohne Cloud und hat zusätzlich interessante Funktionen.

@@ -5,5 +5,5 @@ IPSymconValetudoRE
 ![Code](https://img.shields.io/badge/Code-PHP-blue.svg)
 [![StyleCI](https://github.styleci.io/repos/57190839/shield?branch=master)](https://github.styleci.io/repos/57190839)
 
-Used to control vacuum cleaner robots in IP-Symcon with the alternative firmware Valetudo RE.
+Used to control vacuum cleaner robots in IP-Symcon with the alternative firmware Valetudo RE via MQTT.
 It works also without cloud and has some interesting features.
