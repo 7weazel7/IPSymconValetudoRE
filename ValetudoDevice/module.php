@@ -186,7 +186,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }
 
-        private function SendData(string $Topic, string $Payload)
+        private function SendData($Topic, $Payload)
         {
             $FullTopic = $this->ReturnMqttFullTopic();
             $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
@@ -200,7 +200,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             $this->SendDataToParent($DataJSON);
         }
 
-        public function RequestAction(string $Ident, int $Value)
+        public function RequestAction($Ident, $Value)
         {
             switch ($Ident) {
                 case 'VRE_Commands':
@@ -215,7 +215,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }
         
-        private function SetCommand(int $Value)
+        private function SetCommand($Value)
         {   
     
             switch ($Value) {
@@ -267,7 +267,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }
     
-        private function SetFanSpeed(int $Value)
+        private function SetFanSpeed($Value)
         {   
             switch ($Value) {
                 case 1:
@@ -291,7 +291,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }      
 
-        private function CreateModuleVariableProfile(string $Name)
+        private function CreateModuleVariableProfile($Name)
         {
             switch ($Name) {
                 case 'VRE.Commands':
