@@ -9,7 +9,6 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
     {
         use ValetudoCommon;
 
-        // Überschreibt die interne IPS_Create($id) Funktion
         public function Create()
         {
             // Diese Zeile nicht löschen.
@@ -70,7 +69,6 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }
 
-        // Überschreibt die intere IPS_ApplyChanges($id) Funktion
         public function ApplyChanges()
         {
             // Diese Zeile nicht löschen
@@ -84,7 +82,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
 
         }
 
-        public function ReceiveData($JSONString)
+        private function ReceiveData($JSONString)
         {
       
             $DataJSON = json_decode($JSONString); // Decode: JSONString
@@ -188,7 +186,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }
 
-        public function SendData(string $Topic, string $Payload){
+        private function SendData(string $Topic, string $Payload){
             $FullTopic = $this->ReturnMqttFullTopic();
             $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
             $Data['PacketType'] = 3;
@@ -201,7 +199,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             $this->SendDataToParent($DataJSON);
         }
 
-        public function RequestAction($Ident, $Value)
+        public function RequestAction(string $Ident, int $Value)
         {
             switch ($Ident) {
                 case 'VRE_Commands':
@@ -292,22 +290,6 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }      
 
-        private function ReturnMqttFullTopic(){
-            // Auslesen der MQTT Config
-            $IpAddress = gethostbyname($this->ReadPropertyString('VRE_Hostname'));
-            if (filter_var($IpAddress, FILTER_VALIDATE_IP)) {
-                $HttpApiString = 'http://' . $IpAddress . '/api/' . 'mqtt_config';
-                $MqttConfigJson = file_get_contents($HttpApiString);
-                $MqttConfigJsonDecoded = json_decode($MqttConfigJson); // Decode: MqttConfigJson
-                $MqttIdentifier = $MqttConfigJsonDecoded->identifier;
-                $MqttTopicPrefix = $MqttConfigJsonDecoded->topicPrefix;
-                $FullTopic = $MqttTopicPrefix . '/' . $MqttIdentifier;
-                return $FullTopic;
-                } else {
-                    echo("$IpAddress is not a valid IP address");
-                }
-        }
-
         private function CreateModuleVariableProfile(string $Name)
         {
             switch ($Name) {
@@ -361,4 +343,21 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
                     break;
             }
         }
+
+        private function ReturnMqttFullTopic(){
+            // Auslesen der MQTT Config
+            $IpAddress = gethostbyname($this->ReadPropertyString('VRE_Hostname'));
+            if (filter_var($IpAddress, FILTER_VALIDATE_IP)) {
+                $HttpApiString = 'http://' . $IpAddress . '/api/' . 'mqtt_config';
+                $MqttConfigJson = file_get_contents($HttpApiString);
+                $MqttConfigJsonDecoded = json_decode($MqttConfigJson); // Decode: MqttConfigJson
+                $MqttIdentifier = $MqttConfigJsonDecoded->identifier;
+                $MqttTopicPrefix = $MqttConfigJsonDecoded->topicPrefix;
+                $FullTopic = $MqttTopicPrefix . '/' . $MqttIdentifier;
+                return $FullTopic;
+                } else {
+                    echo("$IpAddress is not a valid IP address");
+                }
+        }
+
     }
