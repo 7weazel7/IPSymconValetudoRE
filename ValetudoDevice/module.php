@@ -82,7 +82,7 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
 
         }
 
-        private function ReceiveData($JSONString)
+        public function ReceiveData($JSONString)
         {
       
             $DataJSON = json_decode($JSONString); // Decode: JSONString
