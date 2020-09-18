@@ -186,7 +186,8 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }
 
-        private function SendData(string $Topic, string $Payload){
+        private function SendData(string $Topic, string $Payload)
+        {
             $FullTopic = $this->ReturnMqttFullTopic();
             $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
             $Data['PacketType'] = 3;
