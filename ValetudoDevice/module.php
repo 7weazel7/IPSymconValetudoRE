@@ -88,7 +88,6 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
         {
       
             $DataJSON = json_decode($JSONString); // Decode: JSONString
-            $this->SendDebug(__FUNCTION__ . ': DataJSON', $DataJSON, 0);
 
             switch ($DataJSON->DataID) {
                 case '{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}': // MQTT Server - RX (from Server to Modul)
