@@ -346,7 +346,8 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
             }
         }
 
-        private function ReturnMqttFullTopic(){
+        private function ReturnMqttFullTopic()
+        {
             // Auslesen der MQTT Config
             $IpAddress = gethostbyname($this->ReadPropertyString('VRE_Hostname'));
             if(!empty($IpAddress)){
