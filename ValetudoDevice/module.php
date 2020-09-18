@@ -362,7 +362,8 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
                         echo("$IpAddress is not a valid IP address. Please check DNS resolver");
                 }
             } else {
-                echo("Please enter a valid IP address or hostname");
+                $FullTopic = 'valetudo' . '/' . 'rockrobo';
+                return $FullTopic;
             }
         }
 
