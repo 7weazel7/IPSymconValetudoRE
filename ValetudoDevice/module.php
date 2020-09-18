@@ -349,17 +349,21 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
         private function ReturnMqttFullTopic(){
             // Auslesen der MQTT Config
             $IpAddress = gethostbyname($this->ReadPropertyString('VRE_Hostname'));
-            if (filter_var($IpAddress, FILTER_VALIDATE_IP)) {
-                $HttpApiString = 'http://' . $IpAddress . '/api/' . 'mqtt_config';
-                $MqttConfigJson = file_get_contents($HttpApiString);
-                $MqttConfigJsonDecoded = json_decode($MqttConfigJson); // Decode: MqttConfigJson
-                $MqttIdentifier = $MqttConfigJsonDecoded->identifier;
-                $MqttTopicPrefix = $MqttConfigJsonDecoded->topicPrefix;
-                $FullTopic = $MqttTopicPrefix . '/' . $MqttIdentifier;
-                return $FullTopic;
+            if(!empty($IpAddress)){
+                if (filter_var($IpAddress, FILTER_VALIDATE_IP)) {
+                    $HttpApiString = 'http://' . $IpAddress . '/api/' . 'mqtt_config';
+                    $MqttConfigJson = file_get_contents($HttpApiString);
+                    $MqttConfigJsonDecoded = json_decode($MqttConfigJson); // Decode: MqttConfigJson
+                    $MqttIdentifier = $MqttConfigJsonDecoded->identifier;
+                    $MqttTopicPrefix = $MqttConfigJsonDecoded->topicPrefix;
+                    $FullTopic = $MqttTopicPrefix . '/' . $MqttIdentifier;
+                    return $FullTopic;
                 } else {
-                    echo("$IpAddress is not a valid IP address");
+                        echo("$IpAddress is not a valid IP address. Please check DNS resolver");
                 }
+            } else {
+                echo("Please enter a valid IP address or hostname");
+            }
         }
 
     }
