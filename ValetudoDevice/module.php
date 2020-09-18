@@ -84,12 +84,12 @@ require_once __DIR__ . '/../libs/common.php';  // globale Funktionen
 
         public function ReceiveData($JSONString)
         {
-            $this->SendDebug(__FUNCTION__ . ': JSONString', $JSONString, 0);
-            $JSONDecoded = json_decode($JSONString); // Decode: JSONString
+            $this->SendDebug(__FUNCTION__ . ': DataJSON', $JSONString, 0);
+            $DataJSON = json_decode($JSONString); // Decode: JSONString
 
-            switch ($JSONDecoded->DataID) {
+            switch ($DataJSON->DataID) {
                 case '{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}': // MQTT Server - RX (from Server to Modul)
-                    $Buffer = $JSONDecoded;
+                    $Buffer = $DataJSON;
                     break;
                 default:
                     $this->SendDebug('Invalid Parent', KL_ERROR, 0);
