@@ -3,7 +3,7 @@
         { "type": "ValidationTextBox", "name": "VRE_Hostname", "caption": "Hostname" }
     ],
     "actions": [
-        { "type": "Button", "label": "Locate", "onClick": "SetValue($this->GetIDForIdent('VRE_Commands'), 5);" },
+        { "type": "Button", "label": "Locate", "onClick": "$this->SetValue($this->GetIDForIdent('VRE_Commands'), 5);" },
         { "type": "TestCenter", "name": "Test center" }
     ],
     "status": [
