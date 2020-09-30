@@ -91,7 +91,19 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		public function ReceiveData($JSONString)
 		{	
 			$this->Logger_Dbg(__FUNCTION__, $JSONString);
-			$data = json_decode($JSONString);
+
+			//prüfen, ob buffer gefüllt ist und Topic und Payload vorhanden sind
+			$Buffer = json_decode($JSONString, false, 512, JSON_THROW_ON_ERROR);
+			if (($Buffer === false) || ($Buffer === null) || !property_exists($Buffer, 'Topic') || !property_exists($Buffer, 'Payload')) {
+				return;
+			}
+
+			//prüfen, ob Payload gefüllt ist
+			$this->Logger_Dbg('MQTT Topic/Payload', sprintf('Topic: %s -- Payload: %s', $Buffer->Topic, $Buffer->Payload));
+
+			/** @noinspection JsonEncodingApiUsageInspection */
+			$Payload = json_decode($Buffer->Payload, true);
+			//$data = json_decode($JSONString);
 			//IPS_LogMessage("Device RECV", utf8_decode($data->Buffer));
 		}
 
