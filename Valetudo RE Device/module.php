@@ -59,6 +59,8 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 			
+			$this->SetInstanceStatus();
+
 			//Setze Filter für ReceiveData
 			$filter = 'valetudo/rockrobo';
 			if ($this->trace) {
