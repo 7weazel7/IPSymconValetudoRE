@@ -58,7 +58,14 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			if (!$this->HasActiveParent()) {
 				return;
 			}
-
+			
+			//Setze Filter für ReceiveData
+			$filter = 'valetudo' . '/' . 'rockrobo';
+			if ($this->trace) {
+				$this->Logger_Dbg('Filter', $filter);
+			}
+			$this->SetReceiveDataFilter($filter);
+		
 			//we will set the instance status when the parent status changes
 			$instIDMQTTServer = $this->GetParent($this->InstanceID);
 			if ($this->trace) {
