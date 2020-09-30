@@ -2,7 +2,8 @@
     "translations": {
         "de": {
             "Connection Data": "Verbindungsdaten",
-            "Host": "Host"
+            "Host": "Host",
+            "Read Configuration": "Konfiguration auslesen"
         }
     }
 }

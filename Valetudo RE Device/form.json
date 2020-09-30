@@ -8,7 +8,7 @@
                 "type":"RowLayout",
                 "items":[
                    { "type":"ValidationTextBox","name":"Host","caption":"Host","onChange":"echo 'change';" },
-                   { "type":"Button","name":"btnReadConfiguration","caption":"Read Circuits","onClick":"IPS_RequestAction($id, 'btnReadConfiguration', '');" }
+                   { "type":"Button","name":"btnReadConfiguration","caption":"Read Configuration","onClick":"IPS_RequestAction($id, 'btnReadConfiguration', '');" }
                 ]
              }
           ]
