@@ -1,7 +1,7 @@
 {
     "id": "{F5406CD1-D3C5-6BA7-2B43-40A58F4FD88B}",
-    "author": "Florian Uetz (7weazel7)",
     "name": "Valetudo RE Module",
+    "author": "Florian Uetz (7weazel7)",
     "url": "https://github.com/7weazel7/IPSymconValetudoRE",
     "compatibility": {
         "version": "5.4"
