@@ -80,7 +80,8 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		}
 
 		public function ReceiveData($JSONString)
-		{
+		{	
+			$this->Logger_Dbg(__FUNCTION__, $JSONString);
 			$data = json_decode($JSONString);
 			//IPS_LogMessage("Device RECV", utf8_decode($data->Buffer));
 		}
