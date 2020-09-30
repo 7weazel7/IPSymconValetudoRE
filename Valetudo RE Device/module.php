@@ -18,6 +18,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		//property names
 		private const PROP_HOST                             = 'Host';
 		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER = 'WriteDebugInformationToIPSLogger';
+		private const PROP_API_MQTT_CONFIG                  = 'ApiMqttConfig';
 
 
 		public function Create()
@@ -31,6 +32,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			// TX (vom Modul zum Server) {043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}
 
 			$this->RegisterPropertyString(self::PROP_HOST, '');
+			$this->RegisterPropertyString(self::PROP_API_MQTT_CONFIG, 'mqtt_config');
 			$this->RegisterPropertyBoolean(self::PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER, false);
 
 			//we will wait until the kernel is ready
@@ -56,10 +58,19 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 
-			            // Auslesen der MQTT Config
-						$FullTopic = $this->ReturnMqttFullTopic();
-						$this->SendDebug(__FUNCTION__ . ': FullTopic', $FullTopic, 0);
-						$this->SetReceiveDataFilter('.*' . $FullTopic . '.*');
+			//we will set the instance status when the parent status changes
+			$instIDMQTTServer = $this->GetParent($this->InstanceID);
+			if ($this->trace) {
+				$this->Logger_Dbg('MQTTServer', '#' . $instIDMQTTServer);
+			}
+
+			if ($instIDMQTTServer > 0) {
+				$this->RegisterMessage($instIDMQTTServer, IM_CHANGESTATUS);
+				$instIDMQTTServerSocket = $this->GetParent($instIDMQTTServer);
+				if ($instIDMQTTServerSocket > 0) {
+					$this->RegisterMessage($instIDMQTTServerSocket, IM_CHANGESTATUS);
+				}
+			}	
 		}
 
 		public function Send()
@@ -76,7 +87,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		private function SetInstanceStatus(): void
     	{
 			$host        = $this->ReadPropertyString(self::PROP_HOST);
-			$circuitName = strtolower($this->ReadPropertyString(self::PROP_CIRCUITNAME));
+			$mqttConfig = strtolower($this->ReadPropertyString(self::PROP_API_MQTT_CONFIG));
 
 			//IP Prüfen
 			if ($host === '') {
@@ -96,6 +107,37 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'Parent not active'));
 				return;
 			}
+
+			//Verbindung prüfen und circuits holen
+			$url    = sprintf(
+				'http://%s/api/%s',
+				$this->ReadPropertyString(self::PROP_HOST),
+				$mqttConfig
+			);
+			$result = $this->readURL($url);
+
+			if ($this->GetStatus() !== IS_ACTIVE) {
+				$this->SetStatus(IS_ACTIVE);
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'active'));
+			}
+		}
+
+		private function readURL(string $url): ?array
+		{
+			$this->Logger_Dbg(__FUNCTION__, 'URL: ' . $url);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 5); //max 5 Sekunden für Verbindungsaufbau
+	
+			$result_json = curl_exec($ch);
+			curl_close($ch);
+	
+			if ($result_json === false) {
+				$this->Logger_Dbg('CURL return', sprintf('empty result for %s', $url));
+				return null;
+			}
+			return json_decode($result_json, true, 512, JSON_THROW_ON_ERROR);
 		}
 
 		private function Logger_Dbg(string $message, string $data): void
