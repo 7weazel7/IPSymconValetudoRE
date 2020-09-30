@@ -1,5 +1,19 @@
-<?php
+<?php /** @noinspection AutoloadingIssuesInspection */
+
+declare(strict_types=1);
+
+if (function_exists('IPSUtils_Include')) {
+    IPSUtils_Include('IPSLogger.inc.php', 'IPSLibrary::app::core::IPSLogger');
+}
+
+require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
+
 	class ValetudoREDevice extends IPSModule {
+
+		use ValetudoREMQTTHelper;
+
+		private const STATUS_INST_IP_IS_EMPTY      = 201; //IP Adresse nicht eingetragen
+		private const STATUS_INST_IP_IS_INVALID    = 202; //IP Adresse ist ungültig
 
 		public function Create()
 		{

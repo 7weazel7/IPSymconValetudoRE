@@ -1,5 +1,26 @@
 {
-    "elements": [],
-    "actions": [],
-    "status": []
-}
+    "elements":
+    [
+       {
+          "type":"ExpansionPanel","caption":"Connection Data",
+          "items":[
+             {
+                "type":"RowLayout",
+                "items":[
+                   { "type":"ValidationTextBox","name":"Host","caption":"Host","onChange":"echo 'change';" },
+                   { "type":"Button","name":"btnReadConfiguration","caption":"Read Circuits","onClick":"IPS_RequestAction($id, 'btnReadConfiguration', '');" }
+                ]
+             }
+          ]
+       }
+    ],
+    "actions":
+    [
+       
+    ],
+    "status":
+    [
+       { "code":201,"icon":"error","caption":"IP address can not be empty." },
+       { "code":202,"icon":"error","caption":"IP address is not valid."}
+    ]
+ }
