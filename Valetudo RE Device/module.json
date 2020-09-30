@@ -1,15 +1,15 @@
 {
-    "id": "{FA9C2E31-ABD4-266B-B3F6-1367070DF4D2}",
+    "id": "{F6307FB2-D3F4-655E-FCC8-37836FA866A1}",
     "name": "Valetudo RE Device",
     "type": 3,
     "vendor": "",
     "aliases": [],
     "parentRequirements": [
-        "{19FE38B7-CE9C-2353-E109-0FC8979B2466}"
+        "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
     ],
     "childRequirements": [],
     "implemented": [
-        "{015AC80F-5C9F-0FFD-BD4F-6AD277B0C01B}"
+        "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
     ],
     "prefix": "VRE",
     "url": "https://github.com/7weazel7/IPSymconValetudoRE"

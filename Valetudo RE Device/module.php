@@ -6,7 +6,11 @@
 			//Never delete this line!
 			parent::Create();
 
-			$this->ConnectParent("{41C40ECA-5CB3-8743-C524-27279ECA8155}");
+			// Verbinde zur GUID vom MQTT Server (Splitter)
+			$this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}');
+			// RX (vom Server zum Modul) {7F7632D9-FA40-4F38-8DEA-C83CD4325A32}
+			// TX (vom Modul zum Server) {043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}
+
 		}
 
 		public function Destroy()
@@ -23,7 +27,7 @@
 
 		public function Send()
 		{
-			$this->SendDataToParent(json_encode(Array("DataID" => "{19FE38B7-CE9C-2353-E109-0FC8979B2466}")));
+			$this->SendDataToParent(json_encode(Array("DataID" => "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}")));
 		}
 
 		public function ReceiveData($JSONString)
