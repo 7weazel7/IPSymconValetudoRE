@@ -20,6 +20,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER = 'WriteDebugInformationToIPSLogger';
 		private const PROP_API_MQTT_CONFIG                  = 'ApiMqttConfig';
 
+		private $trace               = false;
 
 		public function Create()
 		{
