@@ -97,7 +97,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 		private function SetInstanceStatus(): void
     	{
-			$host        = $this->ReadPropertyString(self::PROP_HOST);
+			$host       = gethostbyname($this->ReadPropertyString(self::PROP_HOST));
 			$mqttConfig = strtolower($this->ReadPropertyString(self::PROP_API_MQTT_CONFIG));
 
 			//IP Prüfen
