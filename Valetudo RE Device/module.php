@@ -112,13 +112,21 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$host       = gethostbyname($this->ReadPropertyString(self::PROP_HOST));
 			$mqttConfig = strtolower($this->ReadPropertyString(self::PROP_API_MQTT_CONFIG));
 
-			//IP Prüfen
+			// Überprüfen ob es einen übergeordneten MQTT Splitter gibt
+			if (!$this->HasActiveParent()) {
+				$this->SetStatus(IS_INACTIVE);
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Parent not active")));
+				return;
+			}
+
+			// Überprüfen ob Host/IP eingetragen wurde
 			if ($host === '') {
 				$this->SetStatus(self::STATUS_INST_IP_IS_EMPTY);
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Empty host")));
 				return;
 			}
 
+			// Überprüfen ob Host/IP einem Saugroboter entpsricht
 			if (!filter_var($host, FILTER_VALIDATE_IP)) {
 				// && !filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
 				$this->SetStatus(self::STATUS_INST_IP_IS_INVALID); //IP Adresse ist ungültig
@@ -126,12 +134,6 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 			
-			if (!$this->HasActiveParent()) {
-				$this->SetStatus(IS_INACTIVE);
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Parent not active")));
-				return;
-			}
-
 			//Verbindung prüfen und circuits holen
 			$url    = sprintf(
 				'http://%s/api/%s',
@@ -139,6 +141,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				$mqttConfig
 			);
 			$result = $this->readURL($url);
+			$this->Logger_Dbg(__FUNCTION__, sprintf('Result readURL: %s', $result);
 
 			if ($this->GetStatus() !== IS_ACTIVE) {
 				$this->SetStatus(IS_ACTIVE);
