@@ -141,7 +141,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				$mqttConfig
 			);
 			$result = $this->readURL($url);
-			$this->Logger_Dbg(__FUNCTION__, sprintf('Result readURL: %s', echo($result)));
+			$this->Logger_Dbg(__FUNCTION__, sprintf('Result readURL: %s', json_encode($result)));
 
 			if ($this->GetStatus() !== IS_ACTIVE) {
 				$this->SetStatus(IS_ACTIVE);
