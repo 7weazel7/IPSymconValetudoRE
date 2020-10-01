@@ -1,6 +1,7 @@
 {
     "translations": {
         "de": {
+            "Active": "Aktiv",
             "Connection Data": "Verbindungseinstellungen",
             "Empty host": "Kein Host eingetragen",
             "Host": "Host",
