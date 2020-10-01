@@ -3,6 +3,8 @@
         "de": {
             "Connection Data": "Verbindungseinstellungen",
             "Host": "Host",
+            "IP address can not be empty": "IP-Adresse darf nicht leer sein",
+            "IP address is not valid": "IP-Adresse ungültig",
             "Read Configuration": "Konfiguration auslesen"
         }
     }

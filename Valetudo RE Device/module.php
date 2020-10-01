@@ -115,13 +115,14 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			//IP Prüfen
 			if ($host === '') {
 				$this->SetStatus(self::STATUS_INST_IP_IS_EMPTY);
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'empty Host'));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'Empty host'));
 				return;
 			}
 
-			if (!filter_var($host, FILTER_VALIDATE_IP) && !filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
+			if (!filter_var($host, FILTER_VALIDATE_IP)) {
+				// && !filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
 				$this->SetStatus(self::STATUS_INST_IP_IS_INVALID); //IP Adresse ist ungültig
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'invalid IP'));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'Invalid IP. Please check DNS entry'));
 				return;
 			}
 			
