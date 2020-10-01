@@ -33,7 +33,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			// TX (vom Modul zum Server) {043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}
 
 			$this->RegisterPropertyString(self::PROP_HOST, '');
-			$this->RegisterPropertyString(self::PROP_API_MQTT_CONFIG, 'mqtt_config');
+			$this->RegisterPropertyString(self::PROP_API_MQTT_CONFIG, 'current_status'); // mqtt_config
 			$this->RegisterPropertyBoolean(self::PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER, true);
 
 			//we will wait until the kernel is ready
