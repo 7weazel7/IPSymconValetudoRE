@@ -115,20 +115,20 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			//IP Prüfen
 			if ($host === '') {
 				$this->SetStatus(self::STATUS_INST_IP_IS_EMPTY);
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'Empty host'));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Empty host"));
 				return;
 			}
 
 			if (!filter_var($host, FILTER_VALIDATE_IP)) {
 				// && !filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
 				$this->SetStatus(self::STATUS_INST_IP_IS_INVALID); //IP Adresse ist ungültig
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'Invalid IP. Please check DNS entry'));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Invalid IP. Please check DNS entry"));
 				return;
 			}
 			
 			if (!$this->HasActiveParent()) {
 				$this->SetStatus(IS_INACTIVE);
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'Parent not active'));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Parent not active"));
 				return;
 			}
 
@@ -142,7 +142,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 			if ($this->GetStatus() !== IS_ACTIVE) {
 				$this->SetStatus(IS_ACTIVE);
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), 'active'));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("active"));
 			}
 		}
 
