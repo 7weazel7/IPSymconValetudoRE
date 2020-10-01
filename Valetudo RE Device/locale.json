@@ -2,9 +2,12 @@
     "translations": {
         "de": {
             "Connection Data": "Verbindungseinstellungen",
+            "Empty host": "Kein Host eingetragen",
             "Host": "Host",
+            "Invalid IP. Please check DNS entry": "Ungültige IP. Bitte überprüfen Sie den DNS-Eintrag",
             "IP address can not be empty": "IP-Adresse darf nicht leer sein",
             "IP address is not valid": "IP-Adresse ungültig",
+            "Parent not active": "Übergeordnete Instanz nicht aktiv",
             "Read Configuration": "Konfiguration auslesen"
         }
     }
