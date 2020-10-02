@@ -32,6 +32,8 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		// form element names
 		private const FORM_LIST_ROOMLIST 				    = 'RoomList';
 
+		private $trace         						        = false;
+
 		public function Create()
 		{
 			//Never delete this line!
