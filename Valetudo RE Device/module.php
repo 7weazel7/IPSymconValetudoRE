@@ -171,6 +171,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
     	{
 			// Eingetragenen Host auslesen
 			$host = gethostbyname($this->ReadPropertyString(self::PROP_HOST));
+			echo $host;
 
 			// Überprüfen ob es einen übergeordneten MQTT Splitter gibt
 			if (!$this->HasActiveParent()) {
