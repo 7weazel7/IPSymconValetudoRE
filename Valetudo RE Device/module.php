@@ -195,10 +195,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 			// MQTT-Config abholen und setzen
 			list($state, $topicPrefix, $identifier) = $this->getMQTTConfig();
-			if ($this->$trace) {
-				$this->Logger_Dbg(__FUNCTION__, sprintf('list: %s, %s, %s', $state, $topicPrefix, $identifier));
-			}
-
+			$this->Logger_Dbg(__FUNCTION__, sprintf('list: %s, %s, %s', $state, $topicPrefix, $identifier));
 
 			// Prüfen ob MQTT aktiviert ist
 			if(!ctype_alpha($state)) {
