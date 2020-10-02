@@ -198,7 +198,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$this->Logger_Dbg(__FUNCTION__, sprintf('list: %s, %s, %s', $state, $topicPrefix, $identifier));
 
 			// Prüfen ob MQTT aktiviert ist
-			if(!ctype_alpha($state)) {
+			if(!$state) {
 				$this->SetStatus(self::STATUS_INST_MQTT_NOT_ENABLED); // MQTT nicht aktiviert
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("MQTT not enabled")));
 				return;
