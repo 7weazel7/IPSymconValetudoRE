@@ -77,6 +77,9 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			
 			$this->checkConnection();
 
+			$this->WriteAttributeString(self::ATTR_MQTT_TOPICPREFIX, $topicPrefix);
+			$this->WriteAttributeString(self::ATTR_MQTT_IDENTIFIER, $identifier);
+
 			//Setze Filter für ReceiveData
 			$filter = $this->ReadAttributeString(self::ATTR_MQTT_TOPICPREFIX) . '/' . $this->ReadAttributeString(self::ATTR_MQTT_IDENTIFIER);
 			if ($this->trace) {
@@ -222,8 +225,6 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			
 			// Instanz aktiv setzen
 			if ($this->GetStatus() !== IS_ACTIVE) {
-				$this->WriteAttributeString(self::ATTR_MQTT_TOPICPREFIX, $topicPrefix);
-				$this->WriteAttributeString(self::ATTR_MQTT_IDENTIFIER, $identifier);
 				$this->SetStatus(IS_ACTIVE);
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Active")));
 			}
