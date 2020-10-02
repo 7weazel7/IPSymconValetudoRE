@@ -12,13 +12,20 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 		use ValetudoREMQTTHelper;
 
+		// status values
 		private const STATUS_INST_IP_IS_EMPTY      = 201; //IP Adresse nicht eingetragen
 		private const STATUS_INST_IP_IS_INVALID    = 202; //IP Adresse ist ungültig
 
-		//property names
+		// property names
 		private const PROP_HOST                             = 'Host';
 		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER = 'WriteDebugInformationToIPSLogger';
 		private const PROP_API_MQTT_CONFIG                  = 'ApiMqttConfig';
+
+		// attribute names
+		private const ATTR_ROOMLIST          = 'RoomList';
+
+		// form element names
+		private const FORM_LIST_ROOMLIST     = 'RoomList';
 
 		private $trace               = false;
 
@@ -33,8 +40,10 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			// TX (vom Modul zum Server) {043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}
 
 			$this->RegisterPropertyString(self::PROP_HOST, '');
-			$this->RegisterPropertyString(self::PROP_API_MQTT_CONFIG, 'current_status'); // mqtt_config
+			$this->RegisterPropertyString(self::PROP_API_MQTT_CONFIG, 'mqtt_config');
 			$this->RegisterPropertyBoolean(self::PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER, true);
+
+			$this->RegisterAttributeString(self::ATTR_ROOMLIST, json_encode([], JSON_THROW_ON_ERROR));
 
 			//we will wait until the kernel is ready
 			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
@@ -134,6 +143,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 			
+			
 			//Verbindung prüfen und circuits holen
 			$url    = sprintf(
 				'http://%s/api/%s',
@@ -141,7 +151,8 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				$mqttConfig
 			);
 			$result = $this->readURL($url);
-			$this->Logger_Dbg(__FUNCTION__, sprintf('Result readURL: %s', json_encode($result, JSON_UNESCAPED_SLASHES)));
+			//$this->Logger_Dbg(__FUNCTION__, sprintf('Result readURL: %s', json_encode($result, JSON_UNESCAPED_SLASHES)));
+			$this->Logger_Dbg(__FUNCTION__, sprintf('$result->enabled: %s', $result->enabled));
 
 			if ($this->GetStatus() !== IS_ACTIVE) {
 				$this->SetStatus(IS_ACTIVE);
