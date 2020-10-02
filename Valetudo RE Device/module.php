@@ -195,7 +195,9 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 			// MQTT-Config abholen und setzen
 			list($state, $topicPrefix, $identifier) = $this->getMQTTConfig();
-			$this->Logger_Dbg(__FUNCTION__, sprintf('list: %s, %s, %s', $state, $topicPrefix, $identifier));
+			if ($this->trace) {
+				$this->Logger_Dbg(__FUNCTION__, sprintf('list: %s, %s, %s', $state, $topicPrefix, $identifier));
+			}
 
 			// Prüfen ob MQTT aktiviert ist
 			if(!$state) {
@@ -221,7 +223,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			// Instanz aktiv setzen
 			if ($this->GetStatus() !== IS_ACTIVE) {
 				$this->WriteAttributeString(self::ATTR_MQTT_TOPICPREFIX, $topicPrefix);
-				$this->WriteAttributeString(self::ATTR_MQTT_IDETIFIER, $identifier);
+				$this->WriteAttributeString(self::ATTR_MQTT_IDENTIFIER, $identifier);
 				$this->SetStatus(IS_ACTIVE);
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Active")));
 			}
@@ -230,10 +232,6 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		private function checkConnection(): void
 		{
 			$this->SetInstanceStatus();
-	
-			if ($this->trace) {
-				$this->Logger_Dbg(__FUNCTION__, 'InstanceStatus: ' . $this->GetStatus());
-			}
 		}
 
 		private function getMQTTConfig(): ?array
