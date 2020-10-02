@@ -24,7 +24,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER = 'WriteDebugInformationToIPSLogger';
 
 		// attribute names
-		private const ATTR_ROOMLIST          			    = 'RoomList';
+		private const ATTR_ROOMLIST          			    = 'RoomList';							
 		private const ATTR_API_MQTT_CONFIG                  = 'ApiMqttConfig';
 		private const ATTR_MQTT_TOPICPREFIX                 = 'MqttTopicPrefix';
 		private const ATTR_MQTT_IDENTIFIER	                = 'MqttIdentifier';
@@ -76,9 +76,6 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			}
 			
 			$this->checkConnection();
-
-			$this->WriteAttributeString(self::ATTR_MQTT_TOPICPREFIX, $topicPrefix);
-			$this->WriteAttributeString(self::ATTR_MQTT_IDENTIFIER, $identifier);
 
 			//Setze Filter für ReceiveData
 			$filter = $this->ReadAttributeString(self::ATTR_MQTT_TOPICPREFIX) . '/' . $this->ReadAttributeString(self::ATTR_MQTT_IDENTIFIER);
@@ -223,11 +220,48 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 			
+			$this->WriteAttributeString(self::ATTR_MQTT_TOPICPREFIX, $topicPrefix);
+			$this->WriteAttributeString(self::ATTR_MQTT_IDENTIFIER, $identifier);
+
 			// Instanz aktiv setzen
 			if ($this->GetStatus() !== IS_ACTIVE) {
 				$this->SetStatus(IS_ACTIVE);
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Active")));
 			}
+		}
+
+		private function ReadConfiguration(): ?array
+		{
+			$rooms = strtolower($this->ReadPropertyString(self::PROP_CIRCUITNAME));
+			$url         = sprintf(
+				'http://%s:%s/data/%s/?def&verbose&exact&write',
+				$this->ReadPropertyString(self::PROP_HOST),
+				$this->ReadPropertyString(self::PROP_PORT),
+				$circuitName
+			);
+			$result      = $this->readURL($url);
+	
+			//alle Felder des Ergebnisses auswerten
+			if (!array_key_exists($circuitName, $result)) {
+				trigger_error(sprintf('configuration of topic \'%s\' not found (URL: %s)', $circuitName, $url));
+				return null;
+			}
+			$configurationMessages = $result[$circuitName]['messages'];
+			if (count($configurationMessages) === 1) {
+				trigger_error('Unexpected count of messages: ' . count($configurationMessages));
+				return null;
+			}
+	
+			//ebusd Konfiguration aufbereiten und als Attribut speichern
+			$configurationMessages = $this->selectAndPrepareConfigurationMessages($configurationMessages);
+			$this->WriteAttributeString(self::ATTR_EBUSD_CONFIGURATION_MESSAGES, json_encode($configurationMessages, JSON_THROW_ON_ERROR));
+	
+			//Ausgabeliste aufbereiten und als Attribut speichern
+			$variableList = $this->getVariableList(json_encode($configurationMessages, JSON_THROW_ON_ERROR));
+			$this->UpdateFormField(self::FORM_LIST_VARIABLELIST, 'values', json_encode($variableList, JSON_THROW_ON_ERROR, 3));
+			$this->SaveVariableList($variableList);
+	
+			return $configurationMessages;
 		}
 
 		private function checkConnection(): void
