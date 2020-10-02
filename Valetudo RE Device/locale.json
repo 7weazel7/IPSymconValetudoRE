@@ -5,11 +5,14 @@
             "Connection Data": "Verbindungseinstellungen",
             "Empty host": "Kein Host eingetragen",
             "Host": "Host",
+            "Identifier not set or contains not only letters": "Identifier nicht gesetzt oder enthält nicht nur Buchstaben",
             "Invalid IP. Please check DNS entry": "Ungültige IP. Bitte überprüfen Sie den DNS-Eintrag",
             "IP address can not be empty": "IP-Adresse darf nicht leer sein",
             "IP address is not valid": "IP-Adresse ungültig",
             "Parent not active": "Übergeordnete Instanz nicht aktiv",
-            "Read Configuration": "Konfiguration auslesen"
+            "Please activate MQTT on the Valetudo RE settings": "Bitte aktivieren Sie MQTT in den Einstellungen von Valetudo RE",
+            "Read Configuration": "Konfiguration auslesen",
+            "Topic Prefix not set or contains not only letters": "Topic Prefix nicht gesetzt oder enthält nicht nur Buchstaben"
         }
     }
 }

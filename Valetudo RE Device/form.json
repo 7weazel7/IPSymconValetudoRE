@@ -21,6 +21,9 @@
     "status":
     [
        { "code":201,"icon":"error","caption":"IP address can not be empty" },
-       { "code":202,"icon":"error","caption":"IP address is not valid"}
+       { "code":202,"icon":"error","caption":"IP address is not valid"},
+       { "code":203,"icon":"error","caption":"Please activate MQTT on the Valetudo RE settings"},
+       { "code":204,"icon":"error","caption":"Topic Prefix not set or contains not only letters"},
+       { "code":205,"icon":"error","caption":"Identifier not set or contains not only letters"}
     ]
  }

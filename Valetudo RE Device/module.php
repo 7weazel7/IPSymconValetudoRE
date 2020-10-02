@@ -210,14 +210,14 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			// Prüfen ob topicPrefix gesetzt ist
 			if(!ctype_alpha($topicPrefix)) {
 				$this->SetStatus(self::STATUS_INST_MQTT_TOPICPREFIX_NOT_SET); // topicPrefix nicht gesetzt
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("topicPrefix not set")));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Topic Prefix not set")));
 				return;
 			}
 
 			// Prüfen ob identifier gesetzt ist
 			if(!ctype_alpha($identifier)) {
 				$this->SetStatus(self::STATUS_INST_MQTT_IDENTIFIER_NOT_SET); // identifier nicht gesetzt
-				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("identifier not set")));
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Identifier not set")));
 				return;
 			}
 			
