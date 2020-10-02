@@ -152,7 +152,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			);
 			$result = $this->readURL($url);
 			//$this->Logger_Dbg(__FUNCTION__, sprintf('Result readURL: %s', json_encode($result, JSON_UNESCAPED_SLASHES)));
-			$this->Logger_Dbg(__FUNCTION__, sprintf('$result->enabled: %s', $result->enabled));
+			$this->Logger_Dbg(__FUNCTION__, sprintf('$result->enabled: %s', $result['enabled']));
 
 			if ($this->GetStatus() !== IS_ACTIVE) {
 				$this->SetStatus(IS_ACTIVE);
