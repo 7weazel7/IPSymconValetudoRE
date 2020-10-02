@@ -13,21 +13,24 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		use ValetudoREMQTTHelper;
 
 		// status values
-		private const STATUS_INST_IP_IS_EMPTY      = 201; //IP Adresse nicht eingetragen
-		private const STATUS_INST_IP_IS_INVALID    = 202; //IP Adresse ist ungültig
+		private const STATUS_INST_IP_IS_EMPTY                = 201; // IP Adresse nicht eingetragen
+		private const STATUS_INST_IP_IS_INVALID              = 202; // IP Adresse ist ungültig
+		private const STATUS_INST_MQTT_NOT_ENABLED           = 203; // MQTT ist nicht aktiviert
+		private const STATUS_INST_MQTT_TOPICPREFIX_NOT_SET   = 204; // MQTT topicPrefix nicht gesetzt
+		private const STATUS_INST_MQTT_IDENTIFIER_NOT_SET    = 205; // MQTT identifier nicht gesetzt
 
 		// property names
 		private const PROP_HOST                             = 'Host';
 		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER = 'WriteDebugInformationToIPSLogger';
-		private const PROP_API_MQTT_CONFIG                  = 'ApiMqttConfig';
 
 		// attribute names
-		private const ATTR_ROOMLIST          = 'RoomList';
-
+		private const ATTR_ROOMLIST          			    = 'RoomList';
+		private const ATTR_API_MQTT_CONFIG                  = 'ApiMqttConfig';
+		private const ATTR_MQTT_TOPICPREFIX                 = 'MqttTopicPrefix';
+		private const ATTR_MQTT_IDENTIFIER	                = 'MqttIdentifier';
+		
 		// form element names
-		private const FORM_LIST_ROOMLIST     = 'RoomList';
-
-		private $trace               = false;
+		private const FORM_LIST_ROOMLIST 				    = 'RoomList';
 
 		public function Create()
 		{
@@ -40,10 +43,12 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			// TX (vom Modul zum Server) {043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}
 
 			$this->RegisterPropertyString(self::PROP_HOST, '');
-			$this->RegisterPropertyString(self::PROP_API_MQTT_CONFIG, 'mqtt_config');
 			$this->RegisterPropertyBoolean(self::PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER, true);
 
 			$this->RegisterAttributeString(self::ATTR_ROOMLIST, json_encode([], JSON_THROW_ON_ERROR));
+			$this->RegisterAttributeString(self::ATTR_API_MQTT_CONFIG, 'mqtt_config');
+			$this->RegisterAttributeString(self::ATTR_MQTT_TOPICPREFIX, 'valetudo');
+			$this->RegisterAttributeString(self::ATTR_MQTT_IDENTIFIER, 'rockrobo');
 
 			//we will wait until the kernel is ready
 			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
@@ -68,10 +73,10 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 			
-			$this->SetInstanceStatus();
+			$this->checkConnection();
 
 			//Setze Filter für ReceiveData
-			$filter = 'valetudo/rockrobo';
+			$filter = $this->ReadAttributeString(self::ATTR_MQTT_TOPICPREFIX) . '/' . $this->ReadAttributeString(self::ATTR_MQTT_IDENTIFIER);
 			if ($this->trace) {
 				$this->Logger_Dbg('Filter', $filter);
 			}
@@ -90,6 +95,50 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 					$this->RegisterMessage($instIDMQTTServerSocket, IM_CHANGESTATUS);
 				}
 			}	
+		}
+
+		public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+		{
+			$this->Logger_Dbg(
+				__FUNCTION__,
+				sprintf('SenderID: %s, Message: %s, Data: %s', $SenderID, $Message, json_encode($Data, JSON_THROW_ON_ERROR))
+			);
+	
+			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
+	
+			switch ($Message) {
+				case IPS_KERNELMESSAGE: //the kernel status has changed
+					if ($Data[0] === KR_READY) {
+						$this->ApplyChanges();
+					}
+					break;
+	
+				case IM_CHANGESTATUS: // the parent status has changed
+					$this->ApplyChanges();
+					break;
+			}
+		}
+
+		public function RequestAction($Ident, $Value)
+		{
+			$this->Logger_Dbg(__FUNCTION__, sprintf('Ident: %s, Value: %s', $Ident, json_encode($Value, JSON_THROW_ON_ERROR)));
+
+			if (!$this->HasActiveParent()) {
+				$this->checkConnection();
+				$this->Logger_Dbg(__FUNCTION__, 'No active parent - ignored');
+				return;
+			}
+
+			switch ($Ident) {
+				case 'btnReadConfiguration':
+					$ret = $this->ReadConfiguration();
+					if ($ret === null) {
+						$this->MsgBox('Fehler');
+					} else {
+						$this->MsgBox(count($ret) . ' Einträge gefunden');
+					}
+					return;
+			}
 		}
 
 		public function Send()
@@ -118,8 +167,6 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 		private function SetInstanceStatus(): void
     	{
-			$host       = gethostbyname($this->ReadPropertyString(self::PROP_HOST));
-			$mqttConfig = strtolower($this->ReadPropertyString(self::PROP_API_MQTT_CONFIG));
 
 			// Überprüfen ob es einen übergeordneten MQTT Splitter gibt
 			if (!$this->HasActiveParent()) {
@@ -137,27 +184,67 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 			// Überprüfen ob Host/IP einem Saugroboter entpsricht
 			if (!filter_var($host, FILTER_VALIDATE_IP)) {
-				// && !filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
-				$this->SetStatus(self::STATUS_INST_IP_IS_INVALID); //IP Adresse ist ungültig
+				$this->SetStatus(self::STATUS_INST_IP_IS_INVALID); // IP Adresse ist ungültig
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Invalid IP. Please check DNS entry")));
 				return;
 			}
-			
-			
-			//Verbindung prüfen und circuits holen
-			$url    = sprintf(
-				'http://%s/api/%s',
-				$this->ReadPropertyString(self::PROP_HOST),
-				$mqttConfig
-			);
-			$result = $this->readURL($url);
-			//$this->Logger_Dbg(__FUNCTION__, sprintf('Result readURL: %s', json_encode($result, JSON_UNESCAPED_SLASHES)));
-			$this->Logger_Dbg(__FUNCTION__, sprintf('$result->enabled: %s', $result['enabled']));
 
+			// MQTT-Config abholen und setzen
+			list($state, $topicPrefix, $identifier) = $this->getMQTTConfig();
+
+			// Prüfen ob MQTT aktiviert ist
+			if(!ctype_alpha($state)) {
+				$this->SetStatus(self::STATUS_INST_MQTT_NOT_ENABLED); // MQTT nicht aktiviert
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("MQTT not enabled")));
+				return;
+			}
+
+			// Prüfen ob topicPrefix gesetzt ist
+			if(!ctype_alpha($topicPrefix)) {
+				$this->SetStatus(self::STATUS_INST_MQTT_TOPICPREFIX_NOT_SET); // topicPrefix nicht gesetzt
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("topicPrefix not set")));
+				return;
+			}
+
+			// Prüfen ob identifier gesetzt ist
+			if(!ctype_alpha($identifier)) {
+				$this->SetStatus(self::STATUS_INST_MQTT_IDENTIFIER_NOT_SET); // identifier nicht gesetzt
+				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("identifier not set")));
+				return;
+			}
+			
+			// Instanz aktiv setzen
 			if ($this->GetStatus() !== IS_ACTIVE) {
+				$this->WriteAttributeString(self::ATTR_MQTT_TOPICPREFIX, $topicPrefix);
+				$this->WriteAttributeString(self::ATTR_MQTT_IDETIFIER, $identifier);
 				$this->SetStatus(IS_ACTIVE);
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Active")));
 			}
+		}
+
+		private function checkConnection(): void
+		{
+			$this->SetInstanceStatus();
+	
+			if ($this->trace) {
+				$this->Logger_Dbg(__FUNCTION__, 'InstanceStatus: ' . $this->GetStatus());
+			}
+		}
+
+		private function getMQTTConfig(): string
+		{	
+			$mqtt_config = $this->readURL($this->getApiURL($this->ReadAttributeString(self::ATTR_API_MQTT_CONFIG));
+			return array ($mqtt_config['enabled'], $mqtt_config['topicPrefix'], $mqtt_config['identifier']);
+		}
+
+		private function getApiURL(string $section): string
+		{
+			$apiURL 	= sprintf(
+								'http://%s/api/%s',
+								$this->ReadPropertyString(self::PROP_HOST),
+								$section
+						);
+			return $apiURL;
 		}
 
 		private function readURL(string $url): ?array
