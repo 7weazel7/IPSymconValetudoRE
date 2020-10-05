@@ -2,21 +2,21 @@
     "elements":
     [
        {
-          "type":"ExpansionPanel","caption":"Connection Data",
+          "type":"ExpansionPanel","caption":"Connection data", "expanded": "true",
           "items":[
-             {
-                "type":"RowLayout",
-                "items":[
-                   { "type":"ValidationTextBox","name":"Host","caption":"Host","onChange":"echo 'change';" },
-                   { "type":"Button","name":"btnReadConfiguration","caption":"Read Configuration","onClick":"IPS_RequestAction($id, 'btnReadConfiguration', '');" }
-                ]
-             }
+            { "type":"ValidationTextBox","name":"Host","caption":"Host","onChange":"echo 'change';" }
           ]
-       }
+       },
+       {
+         "type":"ExpansionPanel","caption":"Room configuration", "expanded": "true",
+         "items":[ 
+            { "type":"Button","name":"btnReadConfiguration","caption":"Read Configuration","onClick":"IPS_RequestAction($id, 'btnReadConfiguration', '');" }
+         ]
+      }
     ],
     "actions":
     [
-       
+      
     ],
     "status":
     [

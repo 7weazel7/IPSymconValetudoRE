@@ -16,21 +16,22 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		private const STATUS_INST_IP_IS_EMPTY                = 201; // IP Adresse nicht eingetragen
 		private const STATUS_INST_IP_IS_INVALID              = 202; // IP Adresse ist ungültig
 		private const STATUS_INST_MQTT_NOT_ENABLED           = 203; // MQTT ist nicht aktiviert
-		private const STATUS_INST_MQTT_TOPICPREFIX_NOT_SET   = 204; // MQTT topicPrefix nicht gesetzt
-		private const STATUS_INST_MQTT_IDENTIFIER_NOT_SET    = 205; // MQTT identifier nicht gesetzt
+		private const STATUS_INST_MQTT_TOPICPREFIX_INVAILD   = 204; // MQTT topicPrefix nicht gesetzt
+		private const STATUS_INST_MQTT_IDENTIFIER_INVALID    = 205; // MQTT identifier nicht gesetzt
 
 		// property names
 		private const PROP_HOST                             = 'Host';
 		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER = 'WriteDebugInformationToIPSLogger';
 
 		// attribute names
-		private const ATTR_ROOMLIST          			    = 'RoomList';							
+		private const ATTR_VARIABLELIST         		    = 'VariableList';							
 		private const ATTR_API_MQTT_CONFIG                  = 'ApiMqttConfig';
 		private const ATTR_MQTT_TOPICPREFIX                 = 'MqttTopicPrefix';
 		private const ATTR_MQTT_IDENTIFIER	                = 'MqttIdentifier';
 		
 		// form element names
-		private const FORM_LIST_ROOMLIST 				    = 'RoomList';
+		private const FORM_LIST_VARIABLELIST                 = 'VariableList';
+		private const FORM_ELEMENT_VARIABLENAMES             = 'variablenames';
 
 		private $trace         						        = true;
 
@@ -47,7 +48,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$this->RegisterPropertyString(self::PROP_HOST, '');
 			$this->RegisterPropertyBoolean(self::PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER, true);
 
-			$this->RegisterAttributeString(self::ATTR_ROOMLIST, json_encode([], JSON_THROW_ON_ERROR));
+			$this->RegisterAttributeString(self::ATTR_VARIABLELIST, json_encode([], JSON_THROW_ON_ERROR));
 			$this->RegisterAttributeString(self::ATTR_API_MQTT_CONFIG, 'mqtt_config');
 			$this->RegisterAttributeString(self::ATTR_MQTT_TOPICPREFIX, 'valetudo');
 			$this->RegisterAttributeString(self::ATTR_MQTT_IDENTIFIER, 'rockrobo');
@@ -58,14 +59,38 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 		public function Destroy()
 		{
-			//Never delete this line!
+			if (IPS_GetKernelRunlevel() !== KR_READY) {
+				return parent::Destroy();
+			}
+	
+			$removeVarProfiles = false;
+			$ModuleInstancesAR = IPS_GetInstanceListByModuleID('{F6307FB2-D3F4-655E-FCC8-37836FA866A1}');
+			if (@array_key_exists('0', $ModuleInstancesAR) === false) {
+				$removeVarProfiles = true;
+			} else {
+				if ((@array_key_exists('1', $ModuleInstancesAR) === false) && ($ModuleInstancesAR[0] === $this->InstanceID)) {
+					$removeVarProfiles = true;
+				}
+			}
+			if ($removeVarProfiles === true) {
+				$VarProfilesAR = array('HELIOS.Bypass', 'HELIOS.CO2VOC.ppm', 'HELIOS.Days', 'HELIOS.DefrostState', 'HELIOS.ErrorNoYes', 'HELIOS.FanLevel', 'HELIOS.FanSpeedRPM', 'HELIOS.FanLevelPercent', 'HELIOS.Filter.Months', 'HELIOS.HeatRecoveryEfficiency', 'HELIOS.Mode', 'HELIOS.ModeDuration', 'HELIOS.ModeIntervalTime', 'HELIOS.ModeActivationPeriod', 'HELIOS.OperatingModeRemainingTime', 'HELIOS.ModeVacationProgram', 'HELIOS.OperatingHours', 'HELIOS.OperatingMode', 'HELIOS.PreAfterheater.Perc.Float', 'HELIOS.PreAfterheater.Perc.Int', 'HELIOS.PreAfterheaterState', 'HELIOS.RelativeHumidity', 'HELIOS.ResetAction', 'HELIOS.StateSwitch', 'HELIOS.Temperature.Indoor', 'HELIOS.Temperature.Outdoor', 'HELIOS.VOCCO2HUMControl', 'HELIOS.WeekProgram');
+				foreach ($VarProfilesAR as $VarProfileNameDEL) {
+					@IPS_DeleteVariableProfile($VarProfileNameDEL);
+				}
+			}
+	
 			parent::Destroy();
+	
+			return true;
 		}
 
 		public function ApplyChanges()
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
+
+			// Register Kernel Messages
+			$this->RegisterMessage(0, IPS_KERNELSTARTED);
 
 			if (IPS_GetKernelRunlevel() !== KR_READY) {
 				return;
@@ -83,6 +108,13 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				$this->Logger_Dbg('Filter', $filter);
 			}
 			$this->SetReceiveDataFilter('.*' . $filter . '.*');
+
+			$this->SetSummary(
+				sprintf(
+					'%s',
+					$this->ReadPropertyString(self::PROP_HOST)
+				)
+			);
 		
 			//we will set the instance status when the parent status changes
 			$instIDMQTTServer = $this->GetParent($this->InstanceID);
@@ -138,6 +170,23 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 						$this->MsgBox('Fehler');
 					} else {
 						$this->MsgBox(count($ret) . ' Einträge gefunden');
+					}
+					return;
+
+				case 'btnReadValues':
+					$ret = $this->UpdateCurrentValues(json_decode($Value, true, 512, JSON_THROW_ON_ERROR));
+					$this->MsgBox($ret . ' Werte gelesen');
+					return;
+		
+				case 'btnCreateUpdateVariables':
+					$ret = $this->CreateAndUpdateVariables(json_decode($Value, true, 512, JSON_THROW_ON_ERROR));
+					$this->MsgBox($ret . ' Variablen angelegt/aktualisiert');
+					return;
+
+				case 'VariableList_onEdit':
+					$parameter = json_decode($Value, true);
+					if ($parameter['readable'] !== self::OK_SIGN) {
+						$this->MsgBox(sprintf('Die Variable "%s" ist nicht lesbar. Die Änderungen werden nicht gespeichert.', $parameter['messagename']));
 					}
 					return;
 			}
@@ -208,14 +257,14 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 			// Prüfen ob topicPrefix gesetzt ist
 			if(!ctype_alpha($topicPrefix)) {
-				$this->SetStatus(self::STATUS_INST_MQTT_TOPICPREFIX_NOT_SET); // topicPrefix nicht gesetzt
+				$this->SetStatus(self::STATUS_INST_MQTT_TOPICPREFIX_INVAILD); // topicPrefix nicht gesetzt
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Topic Prefix not set")));
 				return;
 			}
 
 			// Prüfen ob identifier gesetzt ist
 			if(!ctype_alpha($identifier)) {
-				$this->SetStatus(self::STATUS_INST_MQTT_IDENTIFIER_NOT_SET); // identifier nicht gesetzt
+				$this->SetStatus(self::STATUS_INST_MQTT_IDENTIFIER_INVALID); // identifier nicht gesetzt
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Identifier not set")));
 				return;
 			}
