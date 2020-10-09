@@ -253,7 +253,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("identifier not set")));
 				return;
 			} else {
-				$this->WriteAttributeString(self::ATTR_MQTT_IDETIFIER, $identifier);
+				$this->WriteAttributeString(self::ATTR_MQTT_IDENTIFIER, $identifier);
 			}
 
 			// Instanz aktiv setzen
