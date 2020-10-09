@@ -90,7 +90,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			parent::ApplyChanges();
 
 			// Register Kernel Messages
-			this->RegisterMessage(0, IPS_KERNELSTARTED);
+			$this->RegisterMessage(0, IPS_KERNELSTARTED);
 			if (IPS_GetKernelRunlevel() !== KR_READY) {
 				return;
 			}
