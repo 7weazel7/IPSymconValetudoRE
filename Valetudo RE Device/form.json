@@ -1,29 +1,29 @@
 {
-    "elements":
-    [
-       {
-          "type":"ExpansionPanel","caption":"Connection data", "expanded": "true",
-          "items":[
-            { "type":"ValidationTextBox","name":"Host","caption":"Host","onChange":"echo 'change';" }
-          ]
-       },
-       {
-         "type":"ExpansionPanel","caption":"Room configuration", "expanded": "true",
-         "items":[ 
-            { "type":"Button","name":"btnReadConfiguration","caption":"Read Configuration","onClick":"IPS_RequestAction($id, 'btnReadConfiguration', '');" }
+   "elements":
+   [
+      {
+         "type":"ExpansionPanel","caption":"Connection data", "expanded": "true",
+         "items":[
+           { "type":"ValidationTextBox","name":"Host","caption":"Host","onChange":"echo 'change';" }
          ]
-      }
-    ],
-    "actions":
-    [
-      
-    ],
-    "status":
-    [
-       { "code":201,"icon":"error","caption":"IP address can not be empty" },
-       { "code":202,"icon":"error","caption":"IP address is not valid"},
-       { "code":203,"icon":"error","caption":"Please activate MQTT on the Valetudo RE settings"},
-       { "code":204,"icon":"error","caption":"Topic Prefix not set or contains not only letters"},
-       { "code":205,"icon":"error","caption":"Identifier not set or contains not only letters"}
-    ]
- }
+      },
+      {
+        "type":"ExpansionPanel","caption":"Room configuration", "expanded": "true",
+        "items":[ 
+           { "type":"Button","name":"btnReadRoomConfiguration","caption":"Read room configuration","onClick":"IPS_RequestAction($id, 'btnReadRoomConfiguration', '');" }
+        ]
+     }
+   ],
+   "actions":
+   [
+     
+   ],
+   "status":
+   [
+      { "code":201,"icon":"error","caption":"IP address can not be empty" },
+      { "code":202,"icon":"error","caption":"IP address is not valid"},
+      { "code":203,"icon":"error","caption":"Please activate MQTT on the Valetudo RE settings"},
+      { "code":204,"icon":"error","caption":"Topic Prefix not set or contains not only letters"},
+      { "code":205,"icon":"error","caption":"Identifier not set or contains not only letters"}
+   ]
+}

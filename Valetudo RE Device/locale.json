@@ -2,7 +2,7 @@
     "translations": {
         "de": {
             "Active": "Aktiv",
-            "Connection Data": "Verbindungseinstellungen",
+            "Connection data": "Verbindungseinstellungen",
             "Empty host": "Kein Host eingetragen",
             "Host": "Host",
             "Identifier not set or contains not only letters": "Identifier nicht gesetzt oder enthält nicht nur Buchstaben",
@@ -11,7 +11,8 @@
             "IP address is not valid": "IP-Adresse ungültig",
             "Parent not active": "Übergeordnete Instanz nicht aktiv",
             "Please activate MQTT on the Valetudo RE settings": "Bitte aktivieren Sie MQTT in den Einstellungen von Valetudo RE",
-            "Read Configuration": "Konfiguration auslesen",
+            "Read room configuration": "Konfiguration auslesen",
+            "Room configuration": "Raumkonfiguration",
             "Topic Prefix not set or contains not only letters": "Topic Prefix nicht gesetzt oder enthält nicht nur Buchstaben"
         }
     }
