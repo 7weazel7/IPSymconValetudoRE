@@ -218,7 +218,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			}
 
 			// Überprüfen ob Host/IP einem Saugroboter entpsricht
-			if (!filter_var($host, FILTER_VALIDATE_IP)) {
+			if (!filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 				$this->SetStatus(self::STATUS_INST_IP_IS_INVALID); // IP Adresse ist ungültig
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Invalid IP. Please check DNS entry")));
 				return;
