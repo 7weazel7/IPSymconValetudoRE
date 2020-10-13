@@ -192,7 +192,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 			//prüfen, ob buffer gefüllt ist und Topic und Payload vorhanden sind
-			$Buffer = json_decode($JSONString, false, 512, JSON_THROW_ON_ERROR, JSON_UNESCAPED_SLASHES);
+			$Buffer = json_decode($JSONString, false, 512, JSON_THROW_ON_ERROR);
 			if (($Buffer === false) || ($Buffer === null) || !property_exists($Buffer, 'Topic') || !property_exists($Buffer, 'Payload')) {
 				return;
 			}
