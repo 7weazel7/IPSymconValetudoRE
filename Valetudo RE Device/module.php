@@ -191,7 +191,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			if (empty($mqttTopic)) {
 				return;
 			}
-			//prüfen, ob buffer gefüllt ist und Topic und Payload vorhanden sind
+			//prüfen, ob Buffer gefüllt ist und Topic und Payload vorhanden sind
 			$Buffer = json_decode($JSONString, false, 512, JSON_THROW_ON_ERROR);
 			if (($Buffer === false) || ($Buffer === null) || !property_exists($Buffer, 'Topic') || !property_exists($Buffer, 'Payload')) {
 				return;
@@ -204,6 +204,20 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$Payload = json_decode($Buffer->Payload, true);
 			//$data = json_decode($JSONString);
 			//IPS_LogMessage("Device RECV", utf8_decode($data->Buffer));
+
+			if ($Payload === null) {
+				$this->Logger_Dbg(__FUNCTION__, 'Payload is not set: ' . $Buffer->Payload);
+				return;
+			}
+
+			switch ($Buffer->Topic) {
+				case $mqttTopic . '/destinations':
+					$this->Logger_Dbg('MQTT Topic - destinations', sprintf('Payload: %s', $Payload));
+					break;
+				default:
+					//$this->Logger_Dbg('MQTT Topic - destinations', sprintf('Payload: %s', $Payload));
+				break;
+			}
 		}
 
 		private function SetInstanceStatus(): void
