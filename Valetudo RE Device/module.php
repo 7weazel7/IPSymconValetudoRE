@@ -28,6 +28,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		private const ATTR_API_MQTT_CONFIG                  = 'ApiMqttConfig';
 		private const ATTR_MQTT_TOPICPREFIX                 = 'MqttTopicPrefix';
 		private const ATTR_MQTT_IDENTIFIER	                = 'MqttIdentifier';
+		private const ATTR_MQTT_TOPIC						= 'MqttTopic';
 		
 		// form element names
 		private const FORM_LIST_ROOMLIST 				    = 'RoomList';
@@ -51,6 +52,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$this->RegisterAttributeString(self::ATTR_API_MQTT_CONFIG, 'mqtt_config');
 			$this->RegisterAttributeString(self::ATTR_MQTT_TOPICPREFIX, 'valetudo');
 			$this->RegisterAttributeString(self::ATTR_MQTT_IDENTIFIER, 'rockrobo');
+			$this->RegisterAttributeString(self::ATTR_MQTT_TOPIC, 'valetudo/rockrobo');
 
 			//we will wait until the kernel is ready
 			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
@@ -102,7 +104,8 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$this->checkConnection();
 
 			//Setze Filter für ReceiveData
-			$filter = $this->ReadAttributeString(self::ATTR_MQTT_TOPICPREFIX) . '/' . $this->ReadAttributeString(self::ATTR_MQTT_IDENTIFIER);
+			$this->WriteAttributeString(self::ATTR_MQTT_TOPIC, $this->ReadAttributeString(self::ATTR_MQTT_TOPICPREFIX) . '/' . $this->ReadAttributeString(self::ATTR_MQTT_IDENTIFIER));
+			$filter = strtolower($this->ReadAttributeString(self::ATTR_MQTT_TOPIC));
 			if ($this->trace) {
 				$this->Logger_Dbg('Filter', $filter);
 			}
@@ -183,6 +186,11 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		{	
 			$this->Logger_Dbg(__FUNCTION__, $JSONString);
 
+			//prüfen, ob MQTT_TOPIC vorhanden
+			$mqttTopic = strtolower($this->ReadPropertyString(self::MQTT_TOPIC));
+			if (empty($mqttTopic)) {
+				return;
+			}
 			//prüfen, ob buffer gefüllt ist und Topic und Payload vorhanden sind
 			$Buffer = json_decode($JSONString, false, 512, JSON_THROW_ON_ERROR);
 			if (($Buffer === false) || ($Buffer === null) || !property_exists($Buffer, 'Topic') || !property_exists($Buffer, 'Payload')) {
@@ -229,7 +237,6 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			if ($this->trace) {
 				$this->Logger_Dbg(__FUNCTION__, sprintf('list: %s, %s, %s', $state, $topicPrefix, $identifier));
 			}
-
 
 			// Prüfen ob MQTT aktiviert ist
 			if(!$state) {
