@@ -187,7 +187,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$this->Logger_Dbg(__FUNCTION__, $JSONString);
 
 			//prüfen, ob MQTT_TOPIC vorhanden
-			$mqttTopic = strtolower($this->ReadPropertyString(self::ATTR_MQTT_TOPIC));
+			$mqttTopic = strtolower($this->ReadAttributeString(self::ATTR_MQTT_TOPIC));
 			if (empty($mqttTopic)) {
 				return;
 			}
