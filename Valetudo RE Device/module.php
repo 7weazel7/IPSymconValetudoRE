@@ -209,7 +209,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 			if($Buffer->Topic === $mqttTopic . '/destinations') {
 				foreach($Payload["rooms"] as $room) {
-					$this->Logger_Dbg('MQTT Topic - destinations', sprintf($this->translate('Room') . ': %s', $room));
+					$this->Logger_Dbg('Destinations', sprintf($this->translate('Room') . ': %s', $room));
 				}
 			}
 		}
