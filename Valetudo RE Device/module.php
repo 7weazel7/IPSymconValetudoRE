@@ -207,15 +207,10 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 
-			switch ($Buffer->Topic) {
-				case $mqttTopic . '/destinations':
-					foreach($Payload["rooms"] as $room) {
-						$this->Logger_Dbg('MQTT Topic - destinations', sprintf('Payload room: %s', $room));
-					}
-					break;
-				default:
-					//$this->Logger_Dbg('MQTT Topic - destinations', sprintf('Payload: %s', $Payload));
-				break;
+			if($Buffer->Topic === $mqttTopic . '/destinations') {
+				foreach($Payload["rooms"] as $room) {
+					$this->Logger_Dbg('MQTT Topic - destinations', sprintf('Payload room: %s', $room));
+				}
 			}
 		}
 
