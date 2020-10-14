@@ -200,10 +200,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			//prüfen, ob Payload gefüllt ist
 			$this->Logger_Dbg('MQTT Topic/Payload', sprintf('Topic: %s -- Payload: %s', $Buffer->Topic, $Buffer->Payload));
 
-			/** @noinspection JsonEncodingApiUsageInspection */
 			$Payload = json_decode($Buffer->Payload, true);
-			//$data = json_decode($JSONString);
-			//IPS_LogMessage("Device RECV", utf8_decode($data->Buffer));
 
 			if ($Payload === null) {
 				$this->Logger_Dbg(__FUNCTION__, 'Payload is not set: ' . $Buffer->Payload);
@@ -212,7 +209,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 			switch ($Buffer->Topic) {
 				case $mqttTopic . '/destinations':
-					foreach($Payload->rooms as $room) {
+					foreach($Payload["rooms"] as $room) {
 						$this->Logger_Dbg('MQTT Topic - destinations', sprintf('Payload room: %s', $room));
 					}
 					break;
