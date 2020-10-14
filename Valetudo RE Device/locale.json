@@ -12,6 +12,7 @@
             "Parent not active": "Übergeordnete Instanz nicht aktiv",
             "Please activate MQTT on the Valetudo RE settings": "Bitte aktivieren Sie MQTT in den Einstellungen von Valetudo RE",
             "Read room configuration": "Konfiguration auslesen",
+            "Room": "Raum",
             "Room configuration": "Raumkonfiguration",
             "Topic Prefix not set or contains not only letters": "Topic Prefix nicht gesetzt oder enthält nicht nur Buchstaben"
         }
