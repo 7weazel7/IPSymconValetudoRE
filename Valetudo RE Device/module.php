@@ -1,4 +1,4 @@
-<?php /** @noinspection AutoloadingIssuesInspection */
+<?php
 
 declare(strict_types=1);
 
@@ -12,32 +12,32 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 		use ValetudoREMQTTHelper;
 
-		// status values
+		// Status values
 		private const STATUS_INST_IP_IS_EMPTY                = 201; // IP Adresse nicht eingetragen
 		private const STATUS_INST_IP_IS_INVALID              = 202; // IP Adresse ist ungültig
 		private const STATUS_INST_MQTT_NOT_ENABLED           = 203; // MQTT ist nicht aktiviert
 		private const STATUS_INST_MQTT_TOPICPREFIX_NOT_SET   = 204; // MQTT topicPrefix nicht gesetzt
 		private const STATUS_INST_MQTT_IDENTIFIER_NOT_SET    = 205; // MQTT identifier nicht gesetzt
 
-		// property names
-		private const PROP_HOST                             = 'Host';
-		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER = 'WriteDebugInformationToIPSLogger';
+		// Property names
+		private const PROP_HOST                            	 = 'Host';
+		private const PROP_WRITEDEBUGINFORMATIONTOIPSLOGGER	 = 'WriteDebugInformationToIPSLogger';
 
-		// attribute names
-		private const ATTR_ROOMLIST          			    = 'RoomList';
-		private const ATTR_API_MQTT_CONFIG                  = 'ApiMqttConfig';
-		private const ATTR_MQTT_TOPICPREFIX                 = 'MqttTopicPrefix';
-		private const ATTR_MQTT_IDENTIFIER	                = 'MqttIdentifier';
-		private const ATTR_MQTT_TOPIC						= 'MqttTopic';
+		// Attribute names
+		private const ATTR_ROOMLIST          			     = 'RoomList';
+		private const ATTR_API_MQTT_CONFIG                   = 'ApiMqttConfig';
+		private const ATTR_MQTT_TOPICPREFIX                  = 'MqttTopicPrefix';
+		private const ATTR_MQTT_IDENTIFIER	                 = 'MqttIdentifier';
+		private const ATTR_MQTT_TOPIC					     = 'MqttTopic';
 		
-		// form element names
-		private const FORM_LIST_ROOMLIST 				    = 'RoomList';
+		// Form element names
+		private const FORM_LIST_ROOMLIST 				     = 'RoomList';
 
-		private $trace         						        = true;
+		private $trace         						         = true;
 
 		public function Create()
 		{
-			//Never delete this line!
+			// Never delete this line!
 			parent::Create();
 
 			// Verbinde zur GUID vom MQTT Server (Splitter)
@@ -54,7 +54,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$this->RegisterAttributeString(self::ATTR_MQTT_IDENTIFIER, 'rockrobo');
 			$this->RegisterAttributeString(self::ATTR_MQTT_TOPIC, 'valetudo/rockrobo');
 
-			//we will wait until the kernel is ready
+			// We will wait until the kernel is ready
 			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 		}
 
@@ -88,7 +88,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 		public function ApplyChanges()
 		{
-			//Never delete this line!
+			// Never delete this line!
 			parent::ApplyChanges();
 
 			// Register Kernel Messages
@@ -103,14 +103,15 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			
 			$this->checkConnection();
 
-			//Setze Filter für ReceiveData
+			// Set filter
 			$this->WriteAttributeString(self::ATTR_MQTT_TOPIC, $this->ReadAttributeString(self::ATTR_MQTT_TOPICPREFIX) . '/' . $this->ReadAttributeString(self::ATTR_MQTT_IDENTIFIER));
 			$filter = strtolower($this->ReadAttributeString(self::ATTR_MQTT_TOPIC));
 			if ($this->trace) {
 				$this->Logger_Dbg('Filter', $filter);
 			}
 			$this->SetReceiveDataFilter('.*' . $filter . '.*');
-		
+			
+			// Set summary
 			$this->SetSummary(
 				sprintf(
 					'%s',
@@ -118,7 +119,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				)
 			);
 			
-			//we will set the instance status when the parent status changes
+			// We will set the instance status when the parent status changes
 			$instIDMQTTServer = $this->GetParent($this->InstanceID);
 			if ($this->trace) {
 				$this->Logger_Dbg('MQTTServer', '#' . $instIDMQTTServer);
