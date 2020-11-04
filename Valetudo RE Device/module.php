@@ -324,7 +324,10 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 		private function getMQTTConfig(): ?array
 		{	
 			$mqtt_config = $this->readURL($this->getApiURL($this->ReadAttributeString(self::ATTR_API_MQTT_CONFIG)));
-			return array(isset($mqtt_config['enabled']), isset($mqtt_config['topicPrefix']), isset($mqtt_config['identifier']));
+			$enabled = isset($mqtt_config['enabled']) ? $mqtt_config['enabled'] : 0;
+			$topicPrefix = isset($mqtt_config['topicPrefix']) ? $mqtt_config['topicPrefix']	: 0;
+			$identifier = isset($mqtt_config['identifier']) ? $mqtt_config['identifier'] : 0);
+			return array($enabled, $topicPrefix, $identifier);
 		}
 
 		private function getApiURL(string $section): string
