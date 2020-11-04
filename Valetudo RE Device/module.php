@@ -321,7 +321,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			}
 		}
 
-		private function getMQTTConfig(): ?array
+		private function getMQTTConfig()
 		{	
 			$mqtt_config = $this->readURL($this->getApiURL($this->ReadAttributeString(self::ATTR_API_MQTT_CONFIG)));
 			return array ($mqtt_config['enabled'], $mqtt_config['topicPrefix'], $mqtt_config['identifier']);
