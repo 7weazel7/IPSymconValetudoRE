@@ -217,8 +217,6 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 
 		private function SetInstanceStatus(): void
     	{
-			// Eingetragenen Host auslesen
-			$host = gethostbyname($this->ReadPropertyString(self::PROP_HOST));
 
 			// Überprüfen ob es einen übergeordneten MQTT Splitter gibt
 			if (!$this->HasActiveParent()) {
@@ -227,15 +225,17 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 				return;
 			}
 
-			// Überprüfen ob Host/IP eingetragen wurde
-			if ($host === '') {
+			// Überprüfen ob eine IP-Adresse/Hostname eingetragen wurde
+			if ($this->ReadPropertyString(self::PROP_HOST) === '') {
 				$this->SetStatus(self::STATUS_INST_IP_IS_EMPTY);
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Empty host")));
 				return;
 			}
 
-			// Überprüfen ob Host/IP einem Saugroboter entpsricht
-			if (!filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+			// Eingtragenene Host-Eingabe in IPv4-Adresse umwandeln
+			$ip = gethostbyname($this->ReadPropertyString(self::PROP_HOST));
+			// Validierung der IP-Adresse
+			if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 				$this->SetStatus(self::STATUS_INST_IP_IS_INVALID); // IP Adresse ist ungültig
 				$this->Logger_Dbg(__FUNCTION__, sprintf('Status: %s (%s)', $this->GetStatus(), $this->Translate("Invalid IP. Please check DNS entry")));
 				return;
@@ -328,7 +328,7 @@ require_once __DIR__ . '/../libs/ValetudoRE_MQTT_Helper.php';
 			$enabled = isset($mqtt_config['enabled']) ? $mqtt_config['enabled'] : 0;
 			$topicPrefix = isset($mqtt_config['topicPrefix']) ? $mqtt_config['topicPrefix']	: 0;
 			$identifier = isset($mqtt_config['identifier']) ? $mqtt_config['identifier'] : 0;
-			
+
 			return array($enabled, $topicPrefix, $identifier);
 		}
 
